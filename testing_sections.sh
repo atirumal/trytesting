@@ -3,10 +3,10 @@
 # Output CSV file
 OUTPUT_CSV="try_timings.csv"
 
-# Create CSV header (each step gets a separate column)
-echo "Execution,\"Script start\",\"Sandbox setup start\",\"Sandbox setup end\",\"Sandbox validation start\",\"Sandbox validation end\",\"Directory and mount preparation start\",\"Directory and mount preparation end\",\"Overlay mount operations start\",\"Overlay mount operations end\",\"Prepare scripts for mounting and execution end\",\"Unshare and execute sandbox start\",\"Unshare and execute sandbox end\",\"Cleanup start\",\"Cleanup end\",\"Script end\"" > "$OUTPUT_CSV"
+# Create CSV header
+echo "Execution,Step,Time (Seconds)" > "$OUTPUT_CSV"
 
-# Perform 2 executions (adjust this for more executions if needed)
+# Perform 2 executions
 for i in {1..2}; do
     echo "Starting execution $i..."
 
@@ -27,10 +27,7 @@ for i in {1..2}; do
     # Run the try command (adjust the command as needed)
     ~/trytesting/try -y pip3 install pipenv
 
-    # Initialize an array to store the times for this execution
-    EXECUTION_TIMES=()
-
-    # Read the timing log file and extract times for each step
+    # Read the timing log file and append to CSV
     if [[ -f "$HOME/try_timing.txt" ]]; then
         # Process each line in the timing log
         while IFS= read -r line; do
@@ -43,18 +40,12 @@ for i in {1..2}; do
             # Convert the offset to seconds (and format to 3 decimal places)
             OFFSET_TIME_SEC=$(echo "scale=3; $OFFSET_TIME / 1000000000" | bc)
 
-            # Append the time for this step to the array
-            EXECUTION_TIMES+=("$OFFSET_TIME_SEC")
+            # Append to CSV (escape commas if present in STEP)
+            echo "$i,\"$STEP\",$OFFSET_TIME_SEC" >> "$OUTPUT_CSV"
         done < "$HOME/try_timing.txt"
     else
         echo "Timing log not found for execution $i!"
     fi
-
-    # Format the execution row as comma-separated values, each time is in a separate cell
-    EXECUTION_ROW="$i,${EXECUTION_TIMES[*]}"
-
-    # Append the execution row to the CSV file
-    echo "$EXECUTION_ROW" >> "$OUTPUT_CSV"
 done
 
 echo "Timings recorded in $OUTPUT_CSV."
