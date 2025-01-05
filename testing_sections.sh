@@ -3,7 +3,7 @@
 # Output CSV file
 OUTPUT_CSV="try_timings.csv"
 
-# Create CSV header (column names are the step names)
+# Create CSV header (columns will correspond to each step)
 echo "Execution,\"Script start\",\"Sandbox setup start\",\"Sandbox setup end\",\"Sandbox validation start\",\"Sandbox validation end\",\"Directory and mount preparation start\",\"Directory and mount preparation end\",\"Overlay mount operations start\",\"Overlay mount operations end\",\"Prepare scripts for mounting and execution end\",\"Unshare and execute sandbox start\",\"Unshare and execute sandbox end\",\"Cleanup start\",\"Cleanup end\",\"Script end\"" > "$OUTPUT_CSV"
 
 # Perform 2 executions (adjust this for more executions if needed)
