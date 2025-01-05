@@ -1,0 +1,10 @@
+Overhead Measurement Results
+===========================
+Simple echo: Without try: .001 seconds, With try: .279 seconds
+Create 100MB file: Without try: .181 seconds, With try: .874 seconds
+Remove big file: Without try: .029 seconds, With try: .220 seconds
+Create 1000 small files: Without try: .032 seconds, With try: .212 seconds
+List 1000 small files: Without try: .009 seconds, With try: .227 seconds
+Remove 1000 small files: Without try: .020 seconds, With try: .217 seconds
+Modify a large file: Without try: .586 seconds, With try: 1.305 seconds
+Process a random file: Without try: .013 seconds, With try: .235 seconds

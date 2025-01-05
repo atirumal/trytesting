@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this project.
 #
 # https://github.com/binpash/try
-
+echo "Debug: Script started"
 TRY_VERSION="0.2.0"
 TRY_COMMAND="${0##*/}"
 EXECID="$(date +%s%3N)"
@@ -19,11 +19,29 @@ export TRY_COMMAND
 # 1 -- consistency error/failure
 # 2 -- input error
 
-################################################################################
+############################i####################################################
 # Run a command (in `$@`) in an overlay (in `$SANDBOX_DIR`)
 ################################################################################
 
 try() {
+# Path to timing log
+TIMING_LOG="/users/atirumal/try_timing.txt"
+# Helper to log timing information
+log_time() {
+    local section="$1"
+    local now=$(date +"%H:%M:%S.%3N") # Time with milliseconds (HH:MM:SS.mmm)
+    echo "$now - $section" >> "$TIMING_LOG"
+}
+# Clear timing log at the start
+echo "Timing log for 'try' execution" > "$TIMING_LOG"
+
+# Start timing
+log_time "Script start"
+echo "Debug: Reached log_time function"  # Add this line after the `log_time` function declaration
+
+# Example: Start of sandbox setup
+log_time "Sandbox setup start"
+
     START_DIR="$PWD"
 
     if ! command -v findmnt >/dev/null
@@ -44,12 +62,17 @@ try() {
         ## Create a new sandbox if one was not given
         SANDBOX_DIR="$(mktemp -d --suffix ".try-$EXECID")"
     fi
+log_time "Sandbox setup end"
+
+# Example: Start of sandbox validation
+log_time "Sandbox validation start"
 
     ## If the sandbox is not valid we exit early
     if ! sandbox_valid_or_empty "$SANDBOX_DIR"
     then
         error "given sandbox '$SANDBOX_DIR' is invalid" 1
     fi
+log_time "Sandbox validation end"
 
     ## Make any directories that don't already exist, this is OK to do here
     ## because we have already checked if it valid.
@@ -71,8 +94,12 @@ try() {
         echo "consider docker volumes if you want persistence" >> "$try_mount_log"
         mount -t tmpfs tmpfs "$SANDBOX_DIR"
     fi
+# Example: Directory and mount preparation
+log_time "Directory and mount preparation start"
 
     mkdir -p "$SANDBOX_DIR/upperdir" "$SANDBOX_DIR/workdir" "$SANDBOX_DIR/temproot"
+
+log_time "Directory and mount preparation end"
 
     ## Find all the directories and mounts that need to be mounted
     DIRS_AND_MOUNTS="$SANDBOX_DIR"/mounts
@@ -84,6 +111,8 @@ try() {
     # Calculate UPDATED_DIRS_AND_MOUNTS that contains the merge arguments in LOWER_DIRS
     UPDATED_DIRS_AND_MOUNTS="$SANDBOX_DIR"/mounts.updated
     export UPDATED_DIRS_AND_MOUNTS
+# Example: Overlay mount operations
+log_time "Overlay mount operations start"
     while IFS="" read -r mountpoint
     do
         new_mountpoint=""
@@ -107,6 +136,7 @@ try() {
         new_mountpoint="${new_mountpoint:+$new_mountpoint:}$mountpoint"
         echo "$new_mountpoint" >> "$UPDATED_DIRS_AND_MOUNTS"
     done <"$DIRS_AND_MOUNTS"
+log_time "Overlay mount operations end"
 
 
     # we will overlay-mount each root directory separately (instead of all at once) because some directories cannot be overlayed
@@ -289,6 +319,8 @@ EOF
 
     # `$script_to_execute` need not be +x to be sourced
     chmod +x "$mount_and_execute" "$chroot_executable"
+    log_time "Prepare scripts for mounting and execution end"
+
 
     # enable job control so interactive commands will play nicely with try asking for user input later(for committing). #5
     [ -t 0 ] && set -m
@@ -300,12 +332,16 @@ EOF
     # --fork: necessary if we do --pid
     #         "Creation of a persistent PID namespace will fail if the --fork option is not also specified."
     # shellcheck disable=SC2086 # we want field splitting!
+  log_time "Unshare and execute sandbox start"
     unshare --mount --map-root-user --user --pid --fork $EXTRA_NS "$mount_and_execute"
     TRY_EXIT_STATUS=$?
+    log_time "Unshare and execute sandbox end"
 
     # remove symlink
     # first set temproot to be writible, rhel derivatives defaults / to r-xr-xr-x
+   log_time "Cleanup start"
     chmod 755 "${SANDBOX_DIR}/temproot"
+   
     while IFS="" read -r mountpoint
     do
         pure_mountpoint=${mountpoint##*:}
@@ -314,6 +350,7 @@ EOF
             rm "${SANDBOX_DIR}/temproot/${mountpoint}"
         fi
     done <"$DIRS_AND_MOUNTS"
+    log_time "Cleanup end"
 
     ################################################################################
     # commit?
@@ -335,6 +372,7 @@ EOF
                           esac
                       fi;;
     esac
+    log_time "Script end"
 }
 
 ################################################################################
