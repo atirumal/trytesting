@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Output CSV file
-OUTPUT_CSV="try_timings.csv"
+# Output file
+OUTPUT_FILE="try_timings.txt"
 
-# Create CSV header
-echo "Execution,Script start,Sandbox setup start,Sandbox setup end,Sandbox validation start,Sandbox validation end,Directory and mount preparation start,Directory and mount preparation end,Overlay mount operations start,Overlay mount operations end,Prepare scripts for mounting and execution end,Unshare and execute sandbox start,Unshare and execute sandbox end,Cleanup start,Cleanup end,Script end" > "$OUTPUT_CSV"
+# Create table header
+echo "Execution number | Script start | Sandbox setup start | Sandbox setup end | Sandbox validation start | Sandbox validation end | Directory and mount preparation start | Directory and mount preparation end | Overlay mount operations start | Overlay mount operations end | Prepare scripts for mounting and execution end | Unshare and execute sandbox start | Unshare and execute sandbox end | Cleanup start | Cleanup end | Script end" > "$OUTPUT_FILE"
 
 # Perform 100 executions
 for i in {1..2}; do
@@ -50,9 +50,12 @@ for i in {1..2}; do
         echo "Timing log not found for execution $i!"
     fi
 
-    # Append the times for this execution to the CSV (one row per execution)
-    echo "$i,${EXECUTION_TIMES[*]}" >> "$OUTPUT_CSV"
+    # Format the times into a string with "|" separator for table format
+    EXECUTION_LINE="$i | ${EXECUTION_TIMES[*]}"
+
+    # Append the times for this execution to the table file
+    echo "$EXECUTION_LINE" >> "$OUTPUT_FILE"
 done
 
-echo "Timings recorded in $OUTPUT_CSV."
+echo "Timings recorded in $OUTPUT_FILE."
 
