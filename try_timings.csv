@@ -1,33 +1,3 @@
-Execution,Step,Time (Seconds)
-1,"",.891
-1,"Script start",.899
-1,"Sandbox setup start",.907
-1,"Sandbox setup end",.914
-1,"Sandbox validation start",.922
-1,"Sandbox validation end",.928
-1,"Directory and mount preparation start",.936
-1,"Directory and mount preparation end",.943
-1,"Overlay mount operations start",.951
-1,"Overlay mount operations end",.958
-1,"Prepare scripts for mounting and execution end",.964
-1,"Unshare and execute sandbox start",.972
-1,"Unshare and execute sandbox end",.978
-1,"Cleanup start",.985
-1,"Cleanup end",.993
-1,"Script end",1.000
-2,"",.835
-2,"Script start",.842
-2,"Sandbox setup start",.849
-2,"Sandbox setup end",.856
-2,"Sandbox validation start",.864
-2,"Sandbox validation end",.872
-2,"Directory and mount preparation start",.880
-2,"Directory and mount preparation end",.887
-2,"Overlay mount operations start",.894
-2,"Overlay mount operations end",.902
-2,"Prepare scripts for mounting and execution end",.909
-2,"Unshare and execute sandbox start",.916
-2,"Unshare and execute sandbox end",.923
-2,"Cleanup start",.930
-2,"Cleanup end",.937
-2,"Script end",.944
+Execution,Script start,Sandbox setup start,Sandbox setup end,Sandbox validation start,Sandbox validation end,Directory and mount preparation start,Directory and mount preparation end,Overlay mount operations start,Overlay mount operations end,Prepare scripts for mounting and execution end,Unshare and execute sandbox start,Unshare and execute sandbox end,Cleanup start,Cleanup end,Script end
+1,.832 .840 .847 .855 .863 .870 .877 .884 .890 .899 .906 .913 .920 .927 .935 .942
+2,.822 .830 .837 .844 .851 .857 .864 .871 .877 .885 .893 .900 .907 .914 .920 .928

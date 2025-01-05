@@ -4,10 +4,10 @@
 OUTPUT_CSV="try_timings.csv"
 
 # Create CSV header
-echo "Execution,Step,Time (Seconds)" > "$OUTPUT_CSV"
+echo "Execution,Script start,Sandbox setup start,Sandbox setup end,Sandbox validation start,Sandbox validation end,Directory and mount preparation start,Directory and mount preparation end,Overlay mount operations start,Overlay mount operations end,Prepare scripts for mounting and execution end,Unshare and execute sandbox start,Unshare and execute sandbox end,Cleanup start,Cleanup end,Script end" > "$OUTPUT_CSV"
 
-# Perform 2 executions
-for i in {1..100}; do
+# Perform 100 executions
+for i in {1..2}; do
     echo "Starting execution $i..."
 
     # Uninstall pyenv (if installed) to ensure try installs it every time
@@ -27,7 +27,10 @@ for i in {1..100}; do
     # Run the try command (adjust the command as needed)
     ~/trytesting/try -y pip3 install pipenv
 
-    # Read the timing log file and append to CSV
+    # Initialize an array to store the times for this execution
+    EXECUTION_TIMES=()
+
+    # Read the timing log file and extract times for each step
     if [[ -f "$HOME/try_timing.txt" ]]; then
         # Process each line in the timing log
         while IFS= read -r line; do
@@ -40,12 +43,15 @@ for i in {1..100}; do
             # Convert the offset to seconds (and format to 3 decimal places)
             OFFSET_TIME_SEC=$(echo "scale=3; $OFFSET_TIME / 1000000000" | bc)
 
-            # Append to CSV (escape commas if present in STEP)
-            echo "$i,\"$STEP\",$OFFSET_TIME_SEC" >> "$OUTPUT_CSV"
+            # Append the time for this step to the array
+            EXECUTION_TIMES+=("$OFFSET_TIME_SEC")
         done < "$HOME/try_timing.txt"
     else
         echo "Timing log not found for execution $i!"
     fi
+
+    # Append the times for this execution to the CSV (one row per execution)
+    echo "$i,${EXECUTION_TIMES[*]}" >> "$OUTPUT_CSV"
 done
 
 echo "Timings recorded in $OUTPUT_CSV."
