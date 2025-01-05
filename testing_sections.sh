@@ -3,7 +3,7 @@
 # Output CSV file
 OUTPUT_CSV="try_timings.csv"
 
-# Create CSV header (columns will correspond to each step)
+# Create CSV header (each step gets a separate column)
 echo "Execution,\"Script start\",\"Sandbox setup start\",\"Sandbox setup end\",\"Sandbox validation start\",\"Sandbox validation end\",\"Directory and mount preparation start\",\"Directory and mount preparation end\",\"Overlay mount operations start\",\"Overlay mount operations end\",\"Prepare scripts for mounting and execution end\",\"Unshare and execute sandbox start\",\"Unshare and execute sandbox end\",\"Cleanup start\",\"Cleanup end\",\"Script end\"" > "$OUTPUT_CSV"
 
 # Perform 2 executions (adjust this for more executions if needed)
@@ -44,13 +44,13 @@ for i in {1..2}; do
             OFFSET_TIME_SEC=$(echo "scale=3; $OFFSET_TIME / 1000000000" | bc)
 
             # Append the time for this step to the array
-            EXECUTION_TIMES+=("\"$OFFSET_TIME_SEC\"")
+            EXECUTION_TIMES+=("$OFFSET_TIME_SEC")
         done < "$HOME/try_timing.txt"
     else
         echo "Timing log not found for execution $i!"
     fi
 
-    # Format the execution row as comma-separated values, each time is quoted for proper CSV format
+    # Format the execution row as comma-separated values, each time is in a separate cell
     EXECUTION_ROW="$i,${EXECUTION_TIMES[*]}"
 
     # Append the execution row to the CSV file
