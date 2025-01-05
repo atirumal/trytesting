@@ -1,3 +1,0 @@
-Execution number | Script start | Sandbox setup start | Sandbox setup end | Sandbox validation start | Sandbox validation end | Directory and mount preparation start | Directory and mount preparation end | Overlay mount operations start | Overlay mount operations end | Prepare scripts for mounting and execution end | Unshare and execute sandbox start | Unshare and execute sandbox end | Cleanup start | Cleanup end | Script end
-1 | .837 .845 .853 .860 .867 .874 .881 .888 .895 .902 .909 .915 .922 .929 .936 .943
-2 | .874 .881 .888 .895 .902 .909 .917 .924 .930 .938 .946 .953 .960 .967 .974 .982

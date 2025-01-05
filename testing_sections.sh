@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Output file
-OUTPUT_FILE="try_timings.txt"
+OUTPUT_FILE="try_timings.csv"
 
 # Create table header
 echo "Execution number | Script start | Sandbox setup start | Sandbox setup end | Sandbox validation start | Sandbox validation end | Directory and mount preparation start | Directory and mount preparation end | Overlay mount operations start | Overlay mount operations end | Prepare scripts for mounting and execution end | Unshare and execute sandbox start | Unshare and execute sandbox end | Cleanup start | Cleanup end | Script end" > "$OUTPUT_FILE"
