@@ -3,8 +3,11 @@
 # Output CSV file
 OUTPUT_CSV="try_timings.csv"
 
-# Create CSV header (columns will correspond to each step)
-echo "Execution,Script start,Sandbox setup start,Sandbox setup end,Sandbox validation start,Sandbox validation end,Directory and mount preparation start,Directory and mount preparation end,Overlay mount operations start,Overlay mount operations end,Prepare scripts for mounting and execution end,Unshare and execute sandbox start,Unshare and execute sandbox end,Cleanup start,Cleanup end,Script end" > "$OUTPUT_CSV"
+# Define the column headers
+HEADER=("Execution" "Script start" "Sandbox setup start" "Sandbox setup end" "Sandbox validation start" "Sandbox validation end" "Directory and mount preparation start" "Directory and mount preparation end" "Overlay mount operations start" "Overlay mount operations end" "Prepare scripts for mounting and execution end" "Unshare and execute sandbox start" "Unshare and execute sandbox end" "Cleanup start" "Cleanup end" "Script end")
+
+# Write the header to the CSV file
+echo "$(IFS=,; echo "${HEADER[*]}")" > "$OUTPUT_CSV"
 
 # Perform 2 executions (adjust this for more executions if needed)
 for i in {1..2}; do
@@ -32,13 +35,10 @@ for i in {1..2}; do
 
     # Read the timing log file and extract times for each step
     if [[ -f "$HOME/try_timing.txt" ]]; then
-        # Process each line in the timing log
         while IFS= read -r line; do
             # Extract the step time and calculate the time difference
             CURRENT_TIME=$(date +%s%N)  # Current timestamp in nanoseconds
             OFFSET_TIME=$((CURRENT_TIME - START_TIME))  # Time difference from start time
-
-            STEP=$(echo "$line" | awk -F ' - ' '{print $2}')  # Extract the step name
 
             # Convert the offset to seconds (and format to 3 decimal places)
             OFFSET_TIME_SEC=$(echo "scale=3; $OFFSET_TIME / 1000000000" | bc)
@@ -48,6 +48,20 @@ for i in {1..2}; do
         done < "$HOME/try_timing.txt"
     else
         echo "Timing log not found for execution $i!"
+    fi
+
+    # Check for mismatched values
+    NUM_HEADERS=${#HEADER[@]}
+    NUM_TIMES=${#EXECUTION_TIMES[@]}
+
+    if [[ $NUM_TIMES -lt $((NUM_HEADERS - 1)) ]]; then
+        echo "Warning: Missing timing values for execution $i. Filling with 'N/A'."
+        while [[ ${#EXECUTION_TIMES[@]} -lt $((NUM_HEADERS - 1)) ]]; do
+            EXECUTION_TIMES+=("N/A")
+        done
+    elif [[ $NUM_TIMES -gt $((NUM_HEADERS - 1)) ]]; then
+        echo "Warning: Extra timing values for execution $i. Trimming values."
+        EXECUTION_TIMES=("${EXECUTION_TIMES[@]:0:$((NUM_HEADERS - 1))}")
     fi
 
     # Format the execution row as comma-separated values
