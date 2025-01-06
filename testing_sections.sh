@@ -3,17 +3,19 @@
 # Output CSV file
 OUTPUT_CSV="try_timings.csv"
 
+echo "# The numbers in the table represent how long (in seconds) it took to reach that point of the try script from the start (0 sec). For example, Sandbox setup start: 0.849 means that it took 0.849 seconds to reach the \"Sandbox setup start\" part of try " > "$OUTPUT_CSV"
+
 # Define the column headers
-HEADER=("Execution Round" "Script start" "Sandbox setup start" "Sandbox setup end" "Sandbox validation start" "Sandbox validation end" "Directory and mount preparation start" "Directory and mount preparation end" "Overlay mount operations start" "Overlay mount operations end" "Prepare scripts for mounting and execution end" "Unshare and execute sandbox start" "Unshare and execute sandbox end" "Cleanup start" "Cleanup end" "Script end")
+HEADER=("Execution Round" "Start try function" "Sandbox setup start" "Sandbox setup end" "Sandbox validation start" "Sandbox validation end" "Directory and mount preparation start" "Directory and mount preparation end" "Overlay mount operations start" "Overlay mount operations end" "Prepare scripts for mounting and execution end" "Unshare and execute sandbox start" "Unshare and execute sandbox end" "Cleanup start" "Cleanup end" "Script end")
 
 # Write the header to the CSV file
 echo "$(IFS=,; echo "${HEADER[*]}")" > "$OUTPUT_CSV"
 
-# Perform 2 executions (adjust this for more executions if needed)
+# do 100 executions
 for i in {1..100}; do
     echo "Starting execution $i..."
 
-    # Uninstall pyenv (if installed) to ensure try installs it every time
+    # Uninstall pyenv to ensure try installs it every time
     if command -v pyenv &>/dev/null; then
         echo "Uninstalling pyenv..."
         rm -rf "$HOME/.pyenv"  # Remove pyenv directory
@@ -24,10 +26,10 @@ for i in {1..100}; do
         echo "pyenv uninstalled."
     fi
 
-    # Record the start time of the execution in nanoseconds (for precision)
+    # Record the start time of the execution
     START_TIME=$(date +%s%N)
 
-    # Run the try command (adjust the command as needed)
+    # Run the try command\
     ~/trytesting/try -y pip3 install pipenv
 
     # Initialize an array to store the times for this execution
