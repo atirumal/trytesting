@@ -4,13 +4,13 @@
 OUTPUT_CSV="try_timings.csv"
 
 # Define the column headers
-HEADER=("Execution" "Script start" "Sandbox setup start" "Sandbox setup end" "Sandbox validation start" "Sandbox validation end" "Directory and mount preparation start" "Directory and mount preparation end" "Overlay mount operations start" "Overlay mount operations end" "Prepare scripts for mounting and execution end" "Unshare and execute sandbox start" "Unshare and execute sandbox end" "Cleanup start" "Cleanup end" "Script end")
+HEADER=("Execution Round" "Script start" "Sandbox setup start" "Sandbox setup end" "Sandbox validation start" "Sandbox validation end" "Directory and mount preparation start" "Directory and mount preparation end" "Overlay mount operations start" "Overlay mount operations end" "Prepare scripts for mounting and execution end" "Unshare and execute sandbox start" "Unshare and execute sandbox end" "Cleanup start" "Cleanup end" "Script end")
 
 # Write the header to the CSV file
 echo "$(IFS=,; echo "${HEADER[*]}")" > "$OUTPUT_CSV"
 
 # Perform 2 executions (adjust this for more executions if needed)
-for i in {1..2}; do
+for i in {1..100}; do
     echo "Starting execution $i..."
 
     # Uninstall pyenv (if installed) to ensure try installs it every time
