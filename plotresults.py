@@ -1,14 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Load the CSV file
+
 csv_file = "/users/atirumal/trytesting/try_timings.csv"  
 data = pd.read_csv(csv_file)
 
-# Calculate the average time for each step (ignoring  exec round column)
+#calc  the average time for each step (ignoring  exec round column)
 average_timings = data.iloc[:, 1:].mean()
 
-# Create the plot
+# plot
 plt.figure(figsize=(12, 6))
 average_timings.plot(kind='bar', color='skyblue', edgecolor='black')
 
